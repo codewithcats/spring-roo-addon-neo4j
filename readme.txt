@@ -1,1 +1,2 @@
-welcome to my addon!
+Spring Roo Add-on for Neo4j Graph Database Persistence based on work done by the spring-roo-addon-graph add-on team (http://code.google.com/p/spring-roo-addon-graph/).
+This project is a fork of that project to integrate patch to handle bidirectional relationships in the Spring Roo Graph add-on.
