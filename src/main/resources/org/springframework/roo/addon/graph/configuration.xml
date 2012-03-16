@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+    <graphstores>
+        <graphstore id="NEO4J">
+            <properties>
+                <neo4j.version>1.4.1</neo4j.version>
+            </properties>
+            <dependencies>
+                <dependency org="org.neo4j" name="neo4j" rev="${neo4j.version}"/>
+                <dependency org="org.neo4j" name="neo4j" rev="${neo4j.version}"/>
+            </dependencies>
+            <repositories>
+                <repository>
+                    <id>neo4j-public-repository</id>
+                    <name>Publicly available Maven 2 repository for Neo4j</name>
+                    <url>http://m2.neo4j.org/</url>
+                </repository>
+                <repository>
+                    <id>spring-maven-milestone</id>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <name>Spring Framework Maven MILESTONE Repository</name>
+                    <url>http://maven.springframework.org/milestone</url>
+                </repository>
+                <repository>
+                   <id>spring-maven-snapshot</id>
+                   <snapshots>
+                           <enabled>true</enabled>
+                   </snapshots>
+                   <name>Springframework Maven SNAPSHOT Repository</name>
+                   <url>http://maven.springframework.org/snapshot</url>
+                </repository>
+            </repositories>
+        </graphstore>
+    </graphstores>
+    <properties>
+        <spring-data-neo4j.version>1.1.0.RELEASE</spring-data-neo4j.version>
+        <aspectj.version>1.6.12.M1</aspectj.version>
+    </properties>
+
+    <dependencies>
+        <dependency org="org.springframework.data" name="spring-data-neo4j" rev="${spring-data-neo4j.version}"/>
+        <dependency org="javax.validation" name="validation-api" rev="1.0.0.GA"/>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>4.1.0.Final</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.xml.bind</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+    <plugins>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>aspectj-maven-plugin</artifactId>
+            <version>1.0</version>
+            <dependencies>
+                <!-- NB: You must use Maven 2.0.9 or above or these are ignored (see MNG-2972) -->
+                <dependency>
+                    <groupId>org.aspectj</groupId>
+                    <artifactId>aspectjrt</artifactId>
+                    <version>${aspectj.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.aspectj</groupId>
+                    <artifactId>aspectjtools</artifactId>
+                    <version>${aspectj.version}</version>
+                </dependency>
+            </dependencies>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>compile</goal>
+                        <goal>test-compile</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <outxml>true</outxml>
+                <aspectLibraries>
+                    <aspectLibrary>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-aspects</artifactId>
+                    </aspectLibrary>
+                    <aspectLibrary>
+                        <groupId>org.springframework.data</groupId>
+                        <artifactId>spring-data-neo4j</artifactId>
+                    </aspectLibrary>
+                </aspectLibraries>
+                <source>1.6</source>
+                <target>1.6</target>
+            </configuration>
+        </plugin>
+    </plugins>
+</configuration>

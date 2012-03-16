@@ -1,0 +1,93 @@
+project --topLevelPackage org.neo4j.imdb
+graph setup --provider NEO4J --databaseLocation target/imdb
+graph entity --class ~.model.Movie
+field string title
+field number --fieldName year --type java.lang.Integer --permitReservedWords --primitive
+graph entity --class ~.model.Actor
+field string name
+graph relationship --to Movie --from Actor --fieldName movies --type ACTS_IN --cardinality ONE_TO_MANY
+graph relationship --via ~.model.Role --to Movie --from Actor --fieldName roles --type ACTS_IN --cardinality ONE_TO_MANY
+graph relationship --from Movie --to Actor --type ACTS_IN --fieldName actors --direction INCOMING --cardinality MANY_TO_ONE
+field string --fieldName title --class ~.model.Role
+controller scaffold --class ~.web.ActorController --entity ~.model.Actor
+controller scaffold --class ~.web.MovieController --entity ~.model.Movie
+controller scaffold --class ~.web.RoleController --entity ~.model.Role --disallowedOperations create,update,delete
+
+controller all --package ~.web
+		
+<class>org.neo4j.imdb.model.Actor</class>
+<class>org.neo4j.imdb.model.Movie</class>
+<class>org.neo4j.imdb.model.Role</class>
+
+public String Movie.toString() {
+    return String.format("%s (%d)",getTitle(),getYear());
+}
+
+public String Actor.toString() {
+    return getName();
+}
+
+public String Role.toString() {
+    return String.format("%s as %s in %s",getActor(),getTitle(),getMovie());
+}
+
+
+project --topLevelPackage org.neo4j.examples.imdb
+graph setup --provider NEO4J --databaseLocation target/neo4j/imdb
+graph entity --class ~.domain.Movie
+field string title
+field number --fieldName year --type java.lang.Integer --permitReservedWords --primitive
+graph entity --class ~.domain.Actor
+field string name
+graph relationship --to Movie --from Actor --fieldName movies --type ACTS_IN --cardinality MANY_TO_MANY
+graph relationship --via ~.domain.Role --to Movie --from Actor --fieldName roles --type ACTS_IN --cardinality ONE_TO_MANY
+graph relationship --from Movie --to Actor --type ACTS_IN --fieldName actors --direction INCOMING --cardinality MANY_TO_MANY
+field string --fieldName role --class ~.domain.Role --permitReservedWords
+controller all --package ~.web
+
+
+
+--persistence setup --provider NEO4J --database NEO4J
+-- graph relationship --from ~.Person --to ~.Person --via ~.Friend --type friends --fieldName friends --cardinality ONE_TO_MANY
+
+project --topLevelPackage org.springframework.persistence.test
+graph setup --provider NEO4J --databaseLocation target/data
+
+graph entity --class Person
+field string name
+field number --fieldName age --type java.lang.Integer --primitive
+field number --fieldName height --type java.lang.Short
+graph relationship --from ~.Person --to ~.Person --fieldName spouse --type Person.spouse 
+graph relationship --from ~.Person --to ~.Person --fieldName mother --type mother --direction OUTGOING
+graph relationship --from ~.Person --to ~.Person --type boss --fieldName boss --direction INCOMING
+graph relationship --from ~.Person --to ~.Person --type friends --fieldName friends --cardinality ONE_TO_MANY
+
+graph entity --class Group
+field string name
+graph relationship --from ~.Group --to ~.Person --type persons --fieldName persons --direction OUTGOING --cardinality ONE_TO_MANY
+controller all --package ~
+
+<class>org.springframework.persistence.test.Person</class>
+<class>org.springframework.persistence.test.Group</class>
+<class>org.springframework.persistence.test.Friend</class>
+<class>org.springframework.persistence.test.Movie</class>
+
+watch for: imports, broken maven -> aspectj maven plugin -> <id/> <phase/>
+
+add Person constructor, also empty constructor
+
+cd ../datastore-graph;find src -name "Neo4jGraphPersistenceTest*" -o -name "*.properties" | tar cf - -T - | (cd ../roo-test/; tar xf -);cd ../roo-test/
+
+# ROO  - handle primitive types, constructor for fields (automatically set them)
+# AJ todo WARNING] inter-type constructor does not contain explicit constructor call: field initializers in the target type will not be executed [Xlint:noExplicitConstructorCall]
+
+
+# AJ TODO [WARNING] this affected type is not exposed to the weaver: org.springframework.persistence.graph.neo4j.NodeBacked [Xlint:typeNotExposedToWeaver]
+# ASK  TODO roo way of doing things - not using complex stand alone aspects like in datastore-graph but rather ITD all the stuff
+# ASK e.g. how to add around advices in roo aspects -> handling delegated to helper classes from datastore-graph
+
+# ADDON todo derive fieldName from type and vice versa
+# ADDON todo automatically from or to current entity if not provided
+# ROO todo is there undo functionality for the last-n commands (I mistyped sth)
+# ADDON todo update fields with new params
+# ADDON todo automatically update spring applicationcontext with all the 
